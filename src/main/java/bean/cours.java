@@ -27,6 +27,16 @@ public class cours {
 
     }
 
+    public cours(String intitule, String intervenant, String duree) {
+        this.intitule = intitule;
+        this.intervenant = intervenant;
+        this.duree = duree;
+    }
+
+    public cours(String dates) {
+        this.dates = dates;
+    }
+
     public int getId() {
         return id;
     }

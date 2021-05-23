@@ -9,7 +9,7 @@ public class Emploi {
         Connection con=null;
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/TP5","root","");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/TP5","root","");
         }catch(Exception ex){System.out.println(ex);}
         return con;
     }
@@ -18,7 +18,7 @@ public class Emploi {
         int status=0;
         try{
             Connection con=getConnection();
-            PreparedStatement ps=(PreparedStatement) con.prepareStatement(
+            PreparedStatement ps= con.prepareStatement(
                     "insert into cours(intitule,intervenant,duree,dates) values(?,?,?,?)");
             ps.setString(1,c.getIntitule());
             ps.setString(2,c.getIntervenant());
@@ -32,11 +32,11 @@ public class Emploi {
 
 
 
-    public static List<cours> getCours(){
+    public static List<cours> getAllCours(){
         List<cours> list=new ArrayList<cours>();
         try{
             Connection con=getConnection();
-            PreparedStatement ps=(PreparedStatement) con.prepareStatement("select * from cours");
+            PreparedStatement ps= con.prepareStatement("select * from cours");
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
                 cours c=new cours();
@@ -51,12 +51,54 @@ public class Emploi {
         return list;
     }
 
+public static List<cours> getCours(){
+        List<cours> list=new ArrayList<cours>();
+        try{
+            Connection con=getConnection();
+            PreparedStatement ps= con.prepareStatement
+                    ("SELECT intitule,intervenant,duree FROM cours GROUP BY intitule,intervenant,duree ORDER BY duree DESC ");
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                cours c=new cours();
+                c.setIntitule(rs.getString("intitule"));
+                c.setIntervenant(rs.getString("intervenant"));
+                c.setDuree(rs.getString("duree"));
+                list.add(c);
+            }
+        }catch(Exception e){System.out.println(e);}
+        return list;
+        }
+
+     public static List<cours> getDates(cours cs){
+            List<cours> listDates =new ArrayList<cours>();
+            try{
+                Connection con=getConnection();
+                PreparedStatement ps= con.prepareStatement
+                        ("select dates from cours where intitule=? and intervenant=? and duree=?");
+                ps.setString(1,cs.getIntitule());
+                ps.setString(2,cs.getIntervenant());
+                ps.setString(3,cs.getDuree());
+
+                ResultSet rs = ps.executeQuery();
+                while(rs.next()){
+                    cours c=new cours();
+                    c.setDates(rs.getString("dates"));
+                    listDates.add(c);
+                }
+            }catch(Exception e){System.out.println(e);}
+            return listDates;
+        }
+
     public static void main(String[] args) {
 //        Date d = new Date(20-05-2021);
 //
 //        cours c1= new cours("math","xxx","2h",d);
 //        Emploi.insert(c1);
-//        System.out.println(getCours());
+//        cours c = new cours();
+//        c.setIntitule("math");
+//        c.setIntervenant("ali");
+//        System.out.println(getDates(c));
+        System.out.println(getCours());
     }
 
 

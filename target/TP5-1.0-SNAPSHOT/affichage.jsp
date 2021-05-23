@@ -20,8 +20,11 @@
         <th colspan="4">Liste des cours</th>
     </tr>
     <%
-        List<cours> list= Emploi.getCours();
-        request.setAttribute("listCours",list);
+
+        List<cours> listAllCours= Emploi.getAllCours();
+        request.setAttribute("listAllCours",listAllCours);
+        List<cours> listCours= Emploi.getCours();
+        request.setAttribute("listCours",listCours);
     %>
     <tr>
         <th>intitule</th>
@@ -29,14 +32,32 @@
         <th>duree </th>
         <th>dates</th>
     </tr>
+    <%int i = 0;%>
     <c:forEach items="${listCours}" var="c">
         <tr>
-            <td>${c.intitule}</td>
-            <td>${c.intervenant}</td>
-            <td>${c.duree}</td>
-            <td>${c.dates}</td>
-        </tr>
+        <td>${c.intitule}</td>
+        <td>${c.intervenant}</td>
+        <td>${c.duree}</td>
+            <%
+            if (i <= listAllCours.size()) {
+                cours date = listAllCours.get(i);
+                List<cours> listDates = Emploi.getDates(date);
+                request.setAttribute("listDates", listDates);
+                i++;
+            }
+            %>
+            <td>
+
+                    <ul>
+                        <c:forEach items="${listDates}" var="d">
+                        <li>${d.dates}</li>
+                        </c:forEach>
+                    </ul>
+
+            </td>
+    </tr>
     </c:forEach>
+
 </table>
 </body>
 </html>
